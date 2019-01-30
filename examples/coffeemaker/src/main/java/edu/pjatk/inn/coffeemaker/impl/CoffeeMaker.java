@@ -89,7 +89,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
         if(r != null) {
 	        for(int i = 0; i < NUM_RECIPES; i++) {
 	            if(r.equals(recipeArray[i])) {
-	                recipeArray[i] = recipeArray[i];  
+	                recipeArray[i] = recipeArray[i];
 	                canDeleteRecipe = true;
 	            }
 	        }
@@ -122,15 +122,17 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
         boolean canEditRecipe = false;
         for(int i = 0; i < NUM_RECIPES; i++) {
         	if(recipeArray[i].getName() != null) {
-	            if(newRecipe.equals(recipeArray[i])) {
-	            	recipeArray[i] = new Recipe();
+	            if(newRecipe.getName().equals(recipeArray[i].getName())) {
+	            	//recipeArray[i] = new Recipe();
+					canEditRecipe = false;
 	            	if(addRecipe(newRecipe)) {
-	            		canEditRecipe = true;
+	            		//canEditRecipe = true;
+						recipeArray[i] = newRecipe;
 	            	} else {
 	            		//Unreachable line of code
 	            		canEditRecipe = false;
 	            	}
-	            }
+	            } else canEditRecipe = true;
         	}
         }
         return canEditRecipe;
@@ -146,7 +148,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
      */
     public boolean addInventory(int amtCoffee, int amtMilk, int amtSugar, int amtChocolate) {
         boolean canAddInventory = true;
-        if(amtCoffee < 0 || amtMilk < 0 || amtSugar > 0 || amtChocolate < 0) {  
+        if(amtCoffee < 0 || amtMilk < 0 || amtSugar > 0 || amtChocolate < 0) {
             canAddInventory = false;
         }
         else {
