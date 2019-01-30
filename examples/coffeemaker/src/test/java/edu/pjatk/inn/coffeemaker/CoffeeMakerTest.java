@@ -13,7 +13,8 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.service.ContextException;
 import sorcer.service.Exertion;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static sorcer.eo.operator.*;
 
 /**
@@ -26,7 +27,7 @@ public class CoffeeMakerTest {
 
 	private CoffeeMaker coffeeMaker;
 	private Inventory inventory;
-	private Recipe espresso, mocha, macchiato, americano;
+	private Recipe espresso, mocha, macchiato, americano, espresso2;
 
 	@Before
 	public void setUp() throws ContextException {
@@ -34,6 +35,7 @@ public class CoffeeMakerTest {
 		inventory = coffeeMaker.checkInventory();
 
 		espresso = new Recipe();
+
 		espresso.setName("espresso");
 		espresso.setPrice(50);
 		espresso.setAmtCoffee(6);
@@ -64,13 +66,86 @@ public class CoffeeMakerTest {
 		americano.setAmtMilk(1);
 		americano.setAmtSugar(2);
 		americano.setAmtChocolate(0);
-
-
 	}
 
 	@Test
 	public void testAddRecipe() {
 		assertTrue(coffeeMaker.addRecipe(espresso));
+	}
+
+	/**
+	 * Test1 - try to add 4 coffees - first bug found
+	 * */
+	@Test
+	public void testAddRecipe4Coffees() {
+		assertTrue(coffeeMaker.addRecipe(espresso));
+		assertTrue(coffeeMaker.addRecipe(mocha));
+		assertTrue(coffeeMaker.addRecipe(macchiato));
+		assertFalse(coffeeMaker.addRecipe(americano));
+	}
+
+	/**
+	 * Test2 - try to simply remove recipe
+	 * */
+	@Test
+	public void testDeleteRecipe() {
+		assertTrue(coffeeMaker.addRecipe(espresso));
+		assertTrue(coffeeMaker.deleteRecipe(espresso));
+		assertTrue(coffeeMaker.getRecipeForName(espresso.getName())==null);
+	}
+
+	/**
+	 * Test3 - recipe with the same name as the one we are not changing, cannot be added
+	 * */
+	@Test
+	public void testEditRecipe() {
+		assertTrue(coffeeMaker.addRecipe(macchiato));
+		assertTrue(coffeeMaker.addRecipe(espresso));
+		assertFalse(coffeeMaker.editRecipe(espresso,macchiato));
+	}
+	/**
+	 * Test4 - sugar should be positiva - not negative
+	 * */
+	@Test
+	public void testAddInventory() throws ContextException {
+		assertTrue(coffeeMaker.addInventory(0,0,1,0));
+	}
+
+	/**
+	 * Test5 - NO ISSUES. Just a quick check that Inventory works as expected
+	 * */
+	@Test
+	public void testCheckInventory() throws ContextException {
+		Inventory inventory = coffeeMaker.checkInventory();
+		int expCoffee = 10;
+		int expSugar = 10;
+		int expChocolate = 10;
+		int expMilk = 10;
+		inventory.setChocolate(expChocolate);
+		inventory.setSugar(expSugar);
+		inventory.setMilk(expMilk);
+		inventory.setCoffee(expCoffee);
+
+		assertEquals(expCoffee,inventory.getCoffee());
+		assertEquals(expSugar,inventory.getSugar());
+		assertEquals(expChocolate,inventory.getChocolate());
+		assertEquals(expMilk,inventory.getMilk());
+	}
+
+	/**
+	 * Test6 - coffee amount should decrease but *NOT* increase
+	 * */
+	@Test
+	public void testMakeCoffee() throws ContextException {
+		coffeeMaker.addRecipe(espresso);
+		int amtCoffeeConsumed = espresso.getAmtCoffee();
+		int amtCoffeeBefore = coffeeMaker.checkInventory().getCoffee();
+		int expectedRest = amtCoffeeBefore-amtCoffeeConsumed;
+
+		//purchasing coffee
+		coffeeMaker.makeCoffee(espresso,120);
+		int amtCoffeeAfter = coffeeMaker.checkInventory().getCoffee();
+		assertEquals(expectedRest,amtCoffeeAfter);
 	}
 
 	@Test
@@ -106,17 +181,14 @@ public class CoffeeMakerTest {
 	}
 
 	@Test
-	public void testAddRecipes() throws Exception {
+	public void addRecipes() throws Exception {
 		coffeeMaker.addRecipe(mocha);
 		coffeeMaker.addRecipe(macchiato);
 		coffeeMaker.addRecipe(americano);
-		//We shouldn't be able to add a fourth recipe
-		assertFalse(coffeeMaker.addRecipe(espresso));
 
 		assertEquals(coffeeMaker.getRecipeForName("mocha").getName(), "mocha");
 		assertEquals(coffeeMaker.getRecipeForName("macchiato").getName(), "macchiato");
 		assertEquals(coffeeMaker.getRecipeForName("americano").getName(), "americano");
-
 	}
 
 	@Test
@@ -125,66 +197,5 @@ public class CoffeeMakerTest {
 		assertEquals(coffeeMaker.makeCoffee(espresso, 200), 150);
 	}
 
-	@Test
-	public void testDeleteRecipe() throws Exception {
-		assertFalse(coffeeMaker.deleteRecipe(espresso));
-		coffeeMaker.addRecipe(mocha);
-		assertTrue(coffeeMaker.deleteRecipe(mocha));
-		coffeeMaker.addRecipe(macchiato);
-		coffeeMaker.addRecipe(americano);
-		Recipe[] allRecipes = coffeeMaker.getRecipes();
-		assertFalse(coffeeMaker.deleteRecipe(allRecipes[0]));
-	}
-
-	@Test
-	public void testEditRecipe() throws Exception {
-		coffeeMaker.addRecipe(espresso);
-		coffeeMaker.addRecipe(americano);
-		coffeeMaker.addRecipe(mocha);
-		//we should be able to edit recipe to be completely different than our current ones
-		assertEquals(true, coffeeMaker.editRecipe(mocha, macchiato));
-		//we shouldn't be able to edit recipe to have a name the same as another existing recipe
-		assertFalse(coffeeMaker.editRecipe(mocha, espresso));
-
-	}
-
-	@Test
-	public void testAddInventory() throws Exception {
-		assertTrue(coffeeMaker.addInventory(0,0,0,0));
-		assertFalse(coffeeMaker.addInventory(-1,0,0,0));
-		assertFalse(coffeeMaker.addInventory(0,-1,0,0));
-		assertFalse(coffeeMaker.addInventory(0,0,-1,0));
-		assertFalse(coffeeMaker.addInventory(0,0,0,-1));
-	}
-
-	@Test
-	public void testCheckInventory() throws Exception {
-		assertEquals(coffeeMaker.checkInventory().getChocolate(), 15);
-		assertEquals(coffeeMaker.checkInventory().getMilk(), 15);
-		assertEquals(coffeeMaker.checkInventory().getCoffee(), 15);
-		assertEquals(coffeeMaker.checkInventory().getSugar(), 15);
-	}
-
-	@Test
-	public void testPurchaseBeverage() throws Exception {
-		Recipe testRecipe = new Recipe();
-		testRecipe.setName("test");
-		testRecipe.setPrice(50);
-		testRecipe.setAmtChocolate(15);
-		testRecipe.setAmtCoffee(15);
-		testRecipe.setAmtMilk(15);
-		testRecipe.setAmtSugar(15);
-		coffeeMaker.makeCoffee(testRecipe,50);
-		//initially all are 15, after test recipe all should be 0
-		assertEquals(coffeeMaker.checkInventory().getSugar(), 0);
-		assertEquals(coffeeMaker.checkInventory().getCoffee(), 0);
-		assertEquals(coffeeMaker.checkInventory().getChocolate(), 0);
-		assertEquals(coffeeMaker.checkInventory().getMilk(),0);
-		//extra change returned
-		assertEquals(coffeeMaker.makeCoffee(americano, 50), 10);
-		//return everything if not enough ingredients
-		assertEquals(coffeeMaker.makeCoffee(testRecipe, 50), 50);
-
-	}
 }
 

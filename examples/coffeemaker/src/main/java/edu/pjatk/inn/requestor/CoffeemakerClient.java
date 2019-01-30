@@ -113,7 +113,7 @@ public class CoffeemakerClient {
 	        }
 	        String recipeToDeleteString = inputOutput("Please select the number of the recipe to delete.");
 	        int recipeToDelete = stringToInt(recipeToDeleteString) - 1;
-		    if(recipeToDelete < 0) {
+		    if(recipeToDelete < 0||recipeToDelete>=recipes.length){
 		    	mainMenu();
 		    }
 	        String name = recipes[recipeToDelete].getName();
