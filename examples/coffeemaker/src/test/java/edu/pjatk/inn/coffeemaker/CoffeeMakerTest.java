@@ -77,10 +77,16 @@ public class CoffeeMakerTest {
 	 * */
 	@Test
 	public void testAddRecipe4Coffees() {
-		assertTrue(coffeeMaker.addRecipe(espresso));
 		assertTrue(coffeeMaker.addRecipe(mocha));
 		assertTrue(coffeeMaker.addRecipe(macchiato));
-		assertFalse(coffeeMaker.addRecipe(americano));
+		assertTrue(coffeeMaker.addRecipe(americano));
+		//We shouldn't be able to add a fourth recipe
+		assertFalse(coffeeMaker.addRecipe(espresso));
+
+		assertEquals(coffeeMaker.getRecipeForName("mocha").getName(), "mocha");
+		assertEquals(coffeeMaker.getRecipeForName("macchiato").getName(), "macchiato");
+		assertEquals(coffeeMaker.getRecipeForName("americano").getName(), "americano");
+
 	}
 
 	/**
@@ -115,20 +121,10 @@ public class CoffeeMakerTest {
 	 * */
 	@Test
 	public void testCheckInventory() throws ContextException {
-		Inventory inventory = coffeeMaker.checkInventory();
-		int expCoffee = 10;
-		int expSugar = 10;
-		int expChocolate = 10;
-		int expMilk = 10;
-		inventory.setChocolate(expChocolate);
-		inventory.setSugar(expSugar);
-		inventory.setMilk(expMilk);
-		inventory.setCoffee(expCoffee);
-
-		assertEquals(expCoffee,inventory.getCoffee());
-		assertEquals(expSugar,inventory.getSugar());
-		assertEquals(expChocolate,inventory.getChocolate());
-		assertEquals(expMilk,inventory.getMilk());
+		assertEquals(coffeeMaker.checkInventory().getChocolate(), 15);
+		assertEquals(coffeeMaker.checkInventory().getMilk(), 15);
+		assertEquals(coffeeMaker.checkInventory().getCoffee(), 15);
+		assertEquals(coffeeMaker.checkInventory().getSugar(), 15);
 	}
 
 	/**
