@@ -1,0 +1,27 @@
+Bug 1.
+Test for addRecipe:
+Bug description: test fails when 4 coffees are added
+Bug solution: CoffeeMaker line 25 - NUM_RECIPES = 3 instead of 4
+
+Bug 2.
+Test for deleteRecipe.
+Bug description: coffee cannot be removed from CoffeeMaker
+Bug solution: CoffeeMaker line 92 - changing to "recipeArray[i] = null;"
+
+Bug 3.
+Test for editRecipe.
+Bug description: recipe with the same name as the one we are not changing, cannot be added
+Bug solution: CoffeeMaker line 125 - newRecipe -> oldRecipe
+
+Bug 4.
+Test for addInventory.
+Bug description: sugar should be positiva - not negative
+Bug solution: CoffeeMaker line 149 - amtSugar should be <0 not >0
+
+Check inventory:
+All good
+
+Bug 5.
+Test for Purchase Beverage.
+Bug description: coffee amount should decrease but *NOT* increase
+Bug solution: CoffeeMaker line 185 - should be "-" instead of "+"
