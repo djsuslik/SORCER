@@ -31,9 +31,9 @@ public class Payment implements edu.pjatk.inn.coffeemaker.Payment {
                 context.putValue("pay/paid", false);
                 context.putValue("pay/time_stamp", new Date().getDate());
             }else{
-                int rest = amountAvail.intValue()-amountAvail.intValue();
+                int rest = amountAvail.intValue()-amountToPay.intValue();
                 context.putValue("pay/rest", rest);
-                context.putValue("pay/paid", false);
+                context.putValue("pay/paid", true);
                 context.putValue("pay/time_stamp", new Date().getDate());
             }
         }else{
