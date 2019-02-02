@@ -105,7 +105,7 @@ public class CoffeeServiceTest {
 		Context out = upcontext(exert(cmj));
 		logger.info("job context: " + out);
 		assertEquals(value(out, "recipes/americano/recipe/added"), true);
-		assertEquals(value(out, "recipes/americano/recipe/added"), true);
+		assertEquals(value(out, "recipes/macchiato/recipe/added"), true);
 		assertEquals(value(out, "recipes/americano/recipe/added"), true);
 	}
 

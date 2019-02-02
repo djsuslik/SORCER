@@ -57,7 +57,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
                 canAddRecipe = false;
             }
         }
-        
+
         //Check for an empty recipe, add recipe to first empty spot
         if(canAddRecipe) {
         	int emptySpot = -1;
